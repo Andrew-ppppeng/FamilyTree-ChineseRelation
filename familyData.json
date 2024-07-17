@@ -1,0 +1,114 @@
+[
+    {
+      "name": "尤俸祥",
+      "gender": "m",
+      "tier": 1,
+      "birthday": null,
+      "pic": null,
+      "partnerID": null,
+      "children": [
+        {
+          "name": "尤玉凤",
+          "gender": "f",
+          "tier": 2,
+          "birthday": null,
+          "pic": null,
+          "partnerID": null,
+          "children": [
+            {
+              "name": "田晓光",
+              "gender": "m",
+              "tier": 3,
+              "birthday": null,
+              "pic": null,
+              "partnerID": null,
+              "children": [
+                {
+                  "name": "田雨阳",
+                  "gender": "f",
+                  "tier": 4,
+                  "birthday": null,
+                  "pic": null,
+                  "partnerID": null
+                }
+              ]
+            },
+            {
+              "name": "田漫莉",
+              "gender": "f",
+              "tier": 3,
+              "birthday": null,
+              "pic": null,
+              "partnerID": 44.0,
+              "children": [
+                {
+                  "name": "彭博",
+                  "gender": "m",
+                  "tier": 4,
+                  "birthday": "1999-01-11",
+                  "pic": null,
+                  "partnerID": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "NA",
+      "gender": "f",
+      "tier": 1,
+      "birthday": null,
+      "pic": null,
+      "partnerID": null,
+      "children": [
+        {
+          "name": "尤玉坤",
+          "gender": "f",
+          "tier": 2,
+          "birthday": null,
+          "pic": null,
+          "partnerID": null,
+          "children": [
+            {
+              "name": "于航",
+              "gender": "m",
+              "tier": 3,
+              "birthday": null,
+              "pic": null,
+              "partnerID": null,
+              "children": [
+                {
+                  "name": "于童",
+                  "gender": "m",
+                  "tier": 4,
+                  "birthday": null,
+                  "pic": null,
+                  "partnerID": null
+                }
+              ]
+            },
+            {
+              "name": "于红",
+              "gender": "f",
+              "tier": 3,
+              "birthday": null,
+              "pic": null,
+              "partnerID": null,
+              "children": [
+                {
+                  "name": "田振雨",
+                  "gender": "m",
+                  "tier": 4,
+                  "birthday": null,
+                  "pic": null,
+                  "partnerID": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
