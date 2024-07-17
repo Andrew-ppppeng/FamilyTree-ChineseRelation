@@ -2,7 +2,7 @@
 let data = [
   {
     "name":"root",
-    "gender":"",
+    "gender":"?",
     "tier":0,
     "birthday": null,
     "pic": null,
@@ -23,14 +23,6 @@ let data = [
           "birthday": null,
           "pic": null,
           "partnerID": null,
-          // "spouse":{
-          //   "name": "尤俸祥",
-          //   "gender": "m",
-          //   "tier": 2,
-          //   "birthday": null,
-          //   "pic": null,
-          //   "partnerID": null,
-          // },
           "children": [
             {
               "name": "田晓光",
@@ -71,47 +63,7 @@ let data = [
               ]
             }
           ]
-        },
-        {
-            "Name": "尤启栋",
-            "Gender": "男",
-            "birthday": null,
-            "pic": null,
-            "parent": "尤俸祥",
-            "partner": null,
-            "partnerID": null,
-            "children": [
-              {
-                "Name": "尤维杰",
-                "Gender": "男",
-                "birthday": null,
-                "pic": null,
-                "parent": "尤启栋",
-                "partner": null,
-                "partnerID": null,
-                "children": [
-                  {
-                    "Name": "尤惠娟",
-                    "Gender": "女",
-                    "birthday": null,
-                    "pic": null,
-                    "parent": "尤维杰",
-                    "partner": null,
-                    "partnerID": null
-                  }
-                ]
-              },
-              {
-                "Name": "尤维忠",
-                "Gender": "男",
-                "birthday": null,
-                "pic": null,
-                "parent": "尤启栋",
-                "partner": null,
-                "partnerID": null
-              }
-            ]
-          }
+        }
       ]
     },
     {
@@ -198,7 +150,7 @@ const tree = d3.tree()
     ;
 
 // 创建层次结构
-const root = d3.hierarchy(data, d => d.children);
+const root = d3.hierarchy(data[0]);
 console.log("Hierarchy structure:", root);
 // 生成树布局
 tree(root);
@@ -329,14 +281,33 @@ function update(source) {
     const link = svg.selectAll(".link")
         .data(root.links(), d => d.target.id);
 
-    link.enter().append("path")
+    // Enter新的连线
+    const linkEnter = link.enter().insert("path", "g")
         .attr("class", "link")
         .attr("d", d3.linkHorizontal()
-            .x(d => d.y)
-            .y(d => d.x))
-        .merge(link);
+            .x(d => source.y0)
+            .y(d => source.x0));
+      // 更新连线
+      const linkUpdate = linkEnter.merge(link);
 
-    link.exit().remove();
+    linkUpdate.transition()
+        .duration(750)
+        .attr("d", d3.linkHorizontal()
+            .x(d => d.y)
+            .y(d => d.x));
+
+    // 移除退出的连线
+    const linkExit = link.exit().transition()
+        .duration(750)
+        .attr("d", d3.linkHorizontal()
+            .x(d => source.y)
+            .y(d => source.x))
+        .remove();
+
+      root.eachBefore(d => {
+        d.x0 = d.x;
+        d.y0 = d.y;
+    });
 
     // 更新节点
     const node = svg.selectAll(".node")
@@ -402,4 +373,6 @@ root.descendants().forEach(d => {
       d.children = null;
   }
 });
+root.x0 = height / 2;
+root.y0 = 0;
 update(root);
