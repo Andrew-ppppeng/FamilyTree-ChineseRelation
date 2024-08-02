@@ -1,159 +1,49 @@
-// script.js
-let data = [
-  {
-    "name":"root",
-    "gender":"?",
-    "tier":0,
-    "birthday": null,
-    "pic": null,
-    "parentID": null,
-    "children":[    
-      {
-      "name": "尤俸祥",
-      "gender": "m",
-      "tier": 1,
-      "birthday": null,
-      "pic": null,
-      "partnerID": null,
-      "children": [
-        {
-          "name": "尤玉凤",
-          "gender": "f",
-          "tier": 2,
-          "birthday": null,
-          "pic": null,
-          "partnerID": null,
-          "children": [
-            {
-              "name": "田晓光",
-              "gender": "m",
-              "tier": 3,
-              "birthday": null,
-              "pic": null,
-              "partnerID": null,
-              "children": [
-                {
-                  "name": "田雨阳",
-                  "gender": "f",
-                  "tier": 4,
-                  "birthday": null,
-                  "pic": null,
-                  "partnerID": null,
-                  "children":[]
-                }
-              ]
-            },
-            {
-              "name": "田漫莉",
-              "gender": "f",
-              "tier": 3,
-              "birthday": null,
-              "pic": null,
-              "partnerID": 44.0,
-              "children": [
-                {
-                  "name": "彭博",
-                  "gender": "m",
-                  "tier": 4,
-                  "birthday": "1999-01-11",
-                  "pic": null,
-                  "partnerID": null,
-                  "children":[]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "N1A",
-      "gender": "f",
-      "tier": 1,
-      "birthday": null,
-      "pic": null,
-      "partnerID": null,
-      "children": [
-        {
-          "name": "尤玉坤",
-          "gender": "f",
-          "tier": 2,
-          "birthday": null,
-          "pic": null,
-          "partnerID": null,
-          "children": [
-            {
-              "name": "于航",
-              "gender": "m",
-              "tier": 3,
-              "birthday": null,
-              "pic": null,
-              "partnerID": null,
-              "children": [
-                {
-                  "name": "于童",
-                  "gender": "m",
-                  "tier": 4,
-                  "birthday": null,
-                  "pic": null,
-                  "partnerID": null,
-                  "children":[]
-                }
-              ]
-            },
-            {
-              "name": "于红",
-              "gender": "f",
-              "tier": 3,
-              "birthday": null,
-              "pic": null,
-              "partnerID": null,
-              "children": [
-                {
-                  "name": "田振雨",
-                  "gender": "m",
-                  "tier": 4,
-                  "birthday": null,
-                  "pic": null,
-                  "partnerID": null,
-                  "children":[]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }]
-  }
-  ]
 
-// 判断是否有根节点，如果没有，添加一个（适配D3.JS）
-// const data = Array.isArray(familyData) ? { name: "root", children: familyData } : familyData;
+import data, {extractNames} from './data.js';
+import { showLoading, hideLoading } from './util.js';
+import { getDescendantRelations, getSiblings, getSiblingRelations, calculateParentRelations} from '/relation.js'
 
-// console.log("Data structure:", data);
-// 设置SVG容器的宽度和高度
+function getContainerSize() {
+    const container = d3.select("body").node().getBoundingClientRect();
+    return {
+        width: container.width,
+        height: window.innerHeight
+    };
+}
 
-const width = 960;
-const height = 600;
-
+let width = getContainerSize().width;
+let height = getContainerSize().height;
 // 创建SVG容器
-const svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
+const svg = d3.select("body")
+    .append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("width", "100%")
+    .attr("height", "100vh")
     .append("g")
     .attr("transform", "translate(40,0)");
 
+// 添加缩放功能
+const zoom = d3.zoom()
+.scaleExtent([0.1, 3])
+.on("zoom", (event) => {
+    svg.attr("transform", event.transform);
+});
+
+d3.select("svg").call(zoom);
+
 // 创建树布局
-const tree = d3.tree()
-    .size([height, width - 160])
-    //.nodeSize([200, 200])
+const tree = d3.tree()   
+    .separation((a, b) => a.parent === b.parent ? 1 : 1.2) // 添加separation方法,调整节点间距
+    .nodeSize([120, 200])
     ;
 
 // 创建层次结构
 const root = d3.hierarchy(data[0]);
-console.log("Hierarchy structure:", root);
+
 // 生成树布局
 tree(root);
+root.x0 = height / 2;
+root.y0 = 0;
 
 // 创建连线
 const link = svg.selectAll(".link")
@@ -170,22 +60,14 @@ const node = svg.selectAll(".node")
     .enter().append("g")
     .attr("class", "node")
     .attr("transform", d => `translate(${d.y},${d.x})`)
-    .on("click", (event, d) => {
-        d.children = d.children ? null : d._children;
-        update(d);
-    });
+;
 
 // 绘制节点的卡片
 node.append("rect")
-    .attr("width", 120) // 调整宽度
-    .attr("height", 120) // 调整高度
-    .attr("rx", 5)
-    .attr("ry", 5)
-    .attr("stroke", "#999")
-    .attr("stroke-width", 1.5)
-    .attr("fill", "#f9f9f9") // 添加背景色
-    .attr("x", -60)
-    .attr("y", -60);
+    .attr("width", 60) // 调整宽度
+    .attr("height", 100) // 调整高度
+    .attr("x", -30)
+    .attr("y", -50);
 
 // 添加照片
 node.append("image")
@@ -194,185 +76,171 @@ node.append("image")
     .attr("height", 50)
     .attr("x", -25)
     .attr("y", -45)
-    .attr("clip-path", "circle(25px at 25px 25px)");
 
 // 添加姓名
 node.append("text")
-    .attr("dy", 10)
+    .attr("dy", 15)
     .attr("x", 0)
-    .attr("y", 10)
+    // .attr("y", 10)
+    .attr("class", "name")
     .style("text-anchor", "middle")
-    .style("font", "14px sans-serif") // 调整字体大小
-    .style("fill", "#333") // 调整字体颜色
+    .style("font", "0.875rem sans-serif") // 调整字体大小
+    .style("fill", "#000000") // 调整字体颜色
     .text(d => d.data.name);
 
 // 添加生日
 node.append("text")
-    .attr("dy", 25)
+    .attr("dy", 30)
     .attr("x", 0)
-    .attr("y", 25)
+    // .attr("y", 25)
+    .attr("class", "birthday")
     .style("text-anchor", "middle")
-    .style("font", "14px sans-serif") // 调整字体大小
-    .style("fill", "#333") // 调整字体颜色
-    .text(d => d.data.birthday || "未知");
+    .style("font", "0.6rem sans-serif") // 调整字体大小
+    .style("fill", "#000000") // 调整字体颜色
+    .text(d => d.data.birthday || "生日未知");
 
-// 添加配偶连线
-root.descendants().forEach(d => {
-    if (d.data.spouse) { // 检查是否存在spouse数据
-        const spouseNode = {
-            data: d.data.spouse,
-            x: d.x + 150, // 配偶节点在附属节点的下方
-            y: d.y // 保持水平位置不变
-        };
-        svg.append("path")
-            .attr("class", "link spouse-link")
-            .attr("d", d3.linkHorizontal()
-                .x(d => d.y)
-                .y(d => d.x)({
-                    source: { x: d.x, y: d.y },
-                    target: { x: spouseNode.x, y: spouseNode.y }
-                }));
-        // 绘制配偶节点
-        const spouse = svg.append("g")
-            .attr("class", "node spouse")
-            .attr("transform", `translate(${spouseNode.y},${spouseNode.x})`);
-        spouse.append("rect")
-            .attr("width", 120) // 调整宽度
-            .attr("height", 120) // 调整高度
-            .attr("rx", 5)
-            .attr("ry", 5)
-            .attr("stroke", "#999")
-            .attr("stroke-width", 1.5)
-            .attr("fill", "#f9f9f9") // 添加背景色
-            .attr("x", -60)
-            .attr("y", -60);
-        spouse.append("image")
-            .attr("xlink:href", spouseNode.data.pic || "default-pic.png")
-            .attr("width", 50)
-            .attr("height", 50)
-            .attr("x", -25)
-            .attr("y", -45)
-            .attr("clip-path", "circle(25px at 25px 25px)");
-        spouse.append("text")
-            .attr("dy", 10)
-            .attr("x", 0)
-            .attr("y", 10)
-            .style("text-anchor", "middle")
-            .style("font", "14px sans-serif") // 调整字体大小
-            .style("fill", "#333") // 调整字体颜色
-            .text(spouseNode.data.name);
-        spouse.append("text")
-            .attr("dy", 25)
-            .attr("x", 0)
-            .attr("y", 25)
-            .style("text-anchor", "middle")
-            .style("font", "14px sans-serif") // 调整字体大小
-            .style("fill", "#333") // 调整字体颜色
-            .text(spouseNode.data.birthday || "未知");
-    }
-});
 
-// 更新函数
-function update(source) {
-    // 重新生成树布局
-    tree(root);
+function calculateRelations(node) {
+    let tier = node.data.tier;
+    node.data.chain = [];
+    node.data.chain.push('自己');
+    let current = node;
+    getDescendantRelations(node,tier);
 
-    // 更新连线
-    const link = svg.selectAll(".link")
-        .data(root.links(), d => d.target.id);
 
-    // Enter新的连线
-    const linkEnter = link.enter().insert("path", "g")
-        .attr("class", "link")
-        .attr("d", d3.linkHorizontal()
-            .x(d => source.y0)
-            .y(d => source.x0));
-      // 更新连线
-      const linkUpdate = linkEnter.merge(link);
-
-    linkUpdate.transition()
-        .duration(750)
-        .attr("d", d3.linkHorizontal()
-            .x(d => d.y)
-            .y(d => d.x));
-
-    // 移除退出的连线
-    const linkExit = link.exit().transition()
-        .duration(750)
-        .attr("d", d3.linkHorizontal()
-            .x(d => source.y)
-            .y(d => source.x))
-        .remove();
-
-      root.eachBefore(d => {
-        d.x0 = d.x;
-        d.y0 = d.y;
-    });
-
-    // 更新节点
-    const node = svg.selectAll(".node")
-        .data(root.descendants(), d => d.id);
-
-    const nodeEnter = node.enter().append("g")
-        .attr("class", "node")
-        .attr("transform", d => `translate(${d.y},${d.x})`)
-        .on("click", (event, d) => {
-            d.children = d.children ? null : d._children;
-            update(d);
+    while(current !== root) {
+        getSiblingRelations(current);
+        let sibling = getSiblings(current);
+        sibling.forEach(node => {
+            getDescendantRelations(node,tier);
         });
-
-    nodeEnter.append("rect")
-        .attr("width", 120)
-        .attr("height", 120)
-        .attr("rx", 5)
-        .attr("ry", 5)
-        .attr("stroke", "#999")
-        .attr("stroke-width", 1.5)
-        .attr("fill", "#f9f9f9")
-        .attr("x", -60)
-        .attr("y", -60);
-
-    nodeEnter.append("image")
-        .attr("xlink:href", d => d.data.pic || "default-pic.png")
-        .attr("width", 50)
-        .attr("height", 50)
-        .attr("x", -25)
-        .attr("y", -45)
-        .attr("clip-path", "circle(25px at 25px 25px)");
-
-    nodeEnter.append("text")
-        .attr("dy", 10)
-        .attr("x", 0)
-        .attr("y", 10)
-        .style("text-anchor", "middle")
-        .style("font", "14px sans-serif")
-        .style("fill", "#333")
-        .text(d => d.data.name);
-
-    nodeEnter.append("text")
-        .attr("dy", 25)
-        .attr("x", 0)
-        .attr("y", 25)
-        .style("text-anchor", "middle")
-        .style("font", "14px sans-serif")
-        .style("fill", "#333")
-        .text(d => d.data.birthday || "未知");
-
-    node.merge(nodeEnter).transition()
-        .attr("transform", d => `translate(${d.y},${d.x})`);
-
-    node.exit().remove();
+        calculateParentRelations(current);
+        current = current.parent;
+    }
 }
 
-// 初始化
-root.descendants().forEach(d => {
-  d._children = d.children;
-  if (d.depth === 0) {
-      d.children = d._children; // 仅展开根节点的子节点
-  } else {
-      d.children = null;
-  }
+function updateRelation(name){
+    const targetNode = root.descendants().find(d => d.data.name === name);
+    calculateRelations(targetNode);
+    
+    // 清除之前算的文本
+    node.selectAll('text.relation').remove();
+
+    node.append('text')
+    .attr("dy",45)
+    .attr("x",0)
+    .attr("class", "relation")
+    .style("text-anchor","middle")
+    .style("font","0.6rem sans-serif")
+    .style("fill","#000000")
+    .text(d=>{
+        let options = {
+            text:'',		// 目标对象：目标对象的称谓汉字表达，称谓间用‘的’字分隔
+            target:'',	    	// 相对对象：相对对象的称谓汉字表达，称谓间用‘的’字分隔，空表示自己
+            sex:-1,			// 本人性别：0表示女性,1表示男性
+            type:'default',		// 转换类型：'default'计算称谓,'chain'计算关系链,'pair'计算关系合称
+            reverse:false,		// 称呼方式：true对方称呼我,false我称呼对方
+            mode:'default',		// 模式选择：使用setMode方法定制不同地区模式，在此选择自定义模式
+            optimal:false,       	// 最短关系：计算两者之间的最短关系
+        };
+        // if (!d.data.chain) {
+        //     d.data.chain = []
+        // }
+        options.text = d.data.chain.join('的');
+        options.sex = d.data.gender === 'm' ? 1 : 0;
+        console.log(relationship(options));
+        if(targetNode.data.tier === d.data.tier){
+            if(targetNode.data.birthday && d.data.birthday){
+                let targetAge = new Date(targetNode.data.birthday);
+                let relativeAge = new Date(d.data.birthday);
+                if(relativeAge<targetAge){
+                    // target的年纪小，亲属年纪大。亲属为哥哥姐姐
+                    return relationship(options).filter(item => item.includes('姐') || item.includes('哥')) || "错误";
+                }else{
+                    return relationship(options).filter(item => item.includes('弟') || item.includes('妹')) || "错误";
+                }
+            }
+        }
+        return relationship(options) || "错误";
+    })
+}
+
+
+
+function fitToScreen() {
+    const bounds = svg.node().getBBox();
+    const fullWidth = bounds.width;
+    const fullHeight = bounds.height;
+    const width = getContainerSize().width;
+    const height = getContainerSize().height-30;
+    const midX = bounds.x + fullWidth / 2;
+    const midY = bounds.y + fullHeight / 2 -200;
+
+    const scale = 0.9 / Math.max(fullWidth / width, fullHeight / height);
+    const translate = [width / 2 - scale * midX, height / 2 - scale * midY];
+
+    d3.select("svg").transition()
+        .duration(750)
+        .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale))
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const updateButton = document.getElementById('update');
+    updateButton.addEventListener('click', function(){
+        const selectedName = document.getElementById('dropdownInput').value; // 获取dropdown的值
+        showLoading();
+        setTimeout(() => {
+            updateRelation(selectedName);
+            hideLoading();
+        }, 100);
+    });
+    fitToScreen();
 });
-root.x0 = height / 2;
-root.y0 = 0;
-update(root);
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const dropdownInput = document.getElementById('dropdownInput');
+    const dropdownList = document.getElementById('dropdownList');
+  
+    // Your options array
+    const options = extractNames(data); 
+    // Function to create and display dropdown items
+    function createDropdownItems(options) {
+        dropdownList.innerHTML = '';
+        options.forEach(option => {
+          const item = document.createElement('div');
+          item.className = 'dropdown-item';
+          item.textContent = option;
+          dropdownList.appendChild(item);
+    
+          item.addEventListener('click', function() {
+            dropdownInput.value = this.textContent;
+            dropdownList.style.display = 'none';
+          });
+        });
+      }
+  
+    // Initially create all dropdown items
+    createDropdownItems(options);
+  
+    dropdownInput.addEventListener('input', () => {
+        const filter = dropdownInput.value.toLowerCase();
+        const filteredOptions = options.filter(option => option.toLowerCase().includes(filter));
+        createDropdownItems(filteredOptions);
+        dropdownList.style.display = 'block';
+      });
+    
+      dropdownInput.addEventListener('focus', () => {
+        dropdownList.style.display = 'block';
+      });
+    
+      document.addEventListener('click', (event) => {
+        if (!event.target.matches('#dropdownInput')) {
+          dropdownList.style.display = 'none';
+        }
+      });
+    });

@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <title>Family Tree</title>
     <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
+    <script src="https://passer-by.com/relationship/dist/relationship.min.js"></script>
+    <div class="topBanner">
+        <p class="banner-item">选择姓名可解锁称呼</p>
+        <div class="dropdown banner-item">
+            <input type="text" id="dropdownInput" placeholder="Search...">
+            <div id="dropdownList" class="dropdown-list"></div>
+        </div>
+        <button id="update" class="banner-item" type="button">计算称呼</button>
+    </div>
 </body>
 </html>

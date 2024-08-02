@@ -1,3 +1,68 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.dropdown {
+  position: relative;
+  width: 120px;
+}
+
+#dropdownInput {
+  width: 100%;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.dropdown-list {
+  position: absolute;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #fff;
+  z-index: 1000;
+  display: none; /* Initially hidden */
+}
+
+.dropdown-item {
+  padding: 6px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.topBanner{
+  position: fixed;
+  top: 0;
+  left:0;
+  width: 100%;
+  background-color: #c2c3fc;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align items from left to right */
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  /*z-index: 1000;  Ensure the banner is on top of other content */
+}
+.banner-item {
+  margin-right: 20px; /* Space between items */
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+
+
+.svg {
+    width: 100%;
+    height: calc(100vh - 60px);
+    margin-top: 60px;
+  }
+  
+
 .node {
     fill: #fff;
     stroke: #999;
@@ -7,24 +72,45 @@
     padding: 10px;
     width: 150px;
     height: 100px;
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
-.node img {
+.node image {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin-bottom: 5px;
 }
 .node text {
-    font: 15px sans-serif;
-    color: #555;
-    text-anchor: middle;
+    stroke-width:0px;
+    
 }
 .link {
     fill: none;
-    stroke: #555;
+    stroke: #888;
     stroke-width: 1.5px;
 }
+
+#loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: block;
+  z-index: 9999;
+}
+
+
+
+
+@media screen and (max-width: 600px) {
+  .topBanner{
+    padding: 3px;
+  }
+  }
