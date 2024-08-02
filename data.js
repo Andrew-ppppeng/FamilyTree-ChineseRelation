@@ -416,7 +416,7 @@ let data = [
 
  
 
-  const extractNames = (members) => {
+const extractNames = (members) => {
     let names = [];
     members.forEach(member => {
       names.push(member.name);
@@ -427,5 +427,7 @@ let data = [
     return names;
   };
 
+
+const options = extractNames(data);
   export default data;
-  export {extractNames};
+  export {options};

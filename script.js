@@ -1,103 +1,13 @@
 
-import data, {extractNames} from './data.js';
+import {options} from './data.js';
 import { showLoading, hideLoading } from './util.js';
 import { getDescendantRelations, getSiblings, getSiblingRelations, calculateParentRelations} from '/relation.js'
+import {node, root, fitToScreen } from './SVG.js';
 
-function getContainerSize() {
-    const container = d3.select("body").node().getBoundingClientRect();
-    return {
-        width: container.width,
-        height: window.innerHeight
-    };
-}
 
-let width = getContainerSize().width;
-let height = getContainerSize().height;
-// 创建SVG容器
-const svg = d3.select("body")
-    .append("svg")
-    .attr("viewBox", `0 0 ${width} ${height}`)
-    .attr("width", "100%")
-    .attr("height", "100vh")
-    .append("g")
-    .attr("transform", "translate(40,0)");
 
-// 添加缩放功能
-const zoom = d3.zoom()
-.scaleExtent([0.1, 3])
-.on("zoom", (event) => {
-    svg.attr("transform", event.transform);
-});
 
-d3.select("svg").call(zoom);
 
-// 创建树布局
-const tree = d3.tree()   
-    .separation((a, b) => a.parent === b.parent ? 1 : 1.2) // 添加separation方法,调整节点间距
-    .nodeSize([120, 200])
-    ;
-
-// 创建层次结构
-const root = d3.hierarchy(data[0]);
-
-// 生成树布局
-tree(root);
-root.x0 = height / 2;
-root.y0 = 0;
-
-// 创建连线
-const link = svg.selectAll(".link")
-    .data(root.links())
-    .enter().append("path")
-    .attr("class", "link")
-    .attr("d", d3.linkHorizontal()
-        .x(d => d.y)
-        .y(d => d.x));
-
-// 创建节点
-const node = svg.selectAll(".node")
-    .data(root.descendants())
-    .enter().append("g")
-    .attr("class", "node")
-    .attr("transform", d => `translate(${d.y},${d.x})`)
-;
-
-// 绘制节点的卡片
-node.append("rect")
-    .attr("width", 60) // 调整宽度
-    .attr("height", 100) // 调整高度
-    .attr("x", -30)
-    .attr("y", -50);
-
-// 添加照片
-node.append("image")
-    .attr("xlink:href", d => d.data.pic || "default-pic.png")
-    .attr("width", 50)
-    .attr("height", 50)
-    .attr("x", -25)
-    .attr("y", -45)
-
-// 添加姓名
-node.append("text")
-    .attr("dy", 15)
-    .attr("x", 0)
-    // .attr("y", 10)
-    .attr("class", "name")
-    .style("text-anchor", "middle")
-    .style("font", "0.875rem sans-serif") // 调整字体大小
-    .style("fill", "#000000") // 调整字体颜色
-    .text(d => d.data.name);
-
-// 添加生日
-node.append("text")
-    .attr("dy", 30)
-    .attr("x", 0)
-    // .attr("y", 25)
-    .attr("class", "birthday")
-    .style("text-anchor", "middle")
-    .style("font", "0.6rem sans-serif") // 调整字体大小
-    .style("fill", "#000000") // 调整字体颜色
-    .text(d => d.data.birthday || "生日未知");
 
 
 function calculateRelations(node) {
@@ -127,10 +37,9 @@ function updateRelation(name){
     node.selectAll('text.relation').remove();
 
     node.append('text')
-    .attr("dy",45)
+    .attr("dy",55)
     .attr("x",0)
     .attr("class", "relation")
-    .style("text-anchor","middle")
     .style("font","0.6rem sans-serif")
     .style("fill","#000000")
     .text(d=>{
@@ -167,22 +76,7 @@ function updateRelation(name){
 
 
 
-function fitToScreen() {
-    const bounds = svg.node().getBBox();
-    const fullWidth = bounds.width;
-    const fullHeight = bounds.height;
-    const width = getContainerSize().width;
-    const height = getContainerSize().height-30;
-    const midX = bounds.x + fullWidth / 2;
-    const midY = bounds.y + fullHeight / 2 -200;
 
-    const scale = 0.9 / Math.max(fullWidth / width, fullHeight / height);
-    const translate = [width / 2 - scale * midX, height / 2 - scale * midY];
-
-    d3.select("svg").transition()
-        .duration(750)
-        .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale))
-}
 
 document.addEventListener('DOMContentLoaded', function() {
     const updateButton = document.getElementById('update');
@@ -207,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropdownList = document.getElementById('dropdownList');
   
     // Your options array
-    const options = extractNames(data); 
+    // const options = extractNames(data); 
     // Function to create and display dropdown items
     function createDropdownItems(options) {
         dropdownList.innerHTML = '';
