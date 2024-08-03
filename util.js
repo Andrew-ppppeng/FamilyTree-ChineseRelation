@@ -10,6 +10,11 @@ function hideLoading() {
     const loading = document.getElementById('loading');
     if (loading) {
         document.body.removeChild(loading);
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
     }
 }
 

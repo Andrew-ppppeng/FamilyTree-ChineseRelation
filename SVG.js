@@ -68,7 +68,7 @@ node.append("rect")
 
 // 添加照片
 node.append("image")
-    .attr("xlink:href", d => d.data.pic || "default-pic.png")
+    .attr("xlink:href", d => d.data.pic || (d.data.gender === 'm' ? 'default-M.png' : 'default-F.jpg'))
     .attr("width", 70)
     .attr("height", 70)
     .attr("x", -35)

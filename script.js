@@ -1,7 +1,6 @@
-
 import {options} from './data.js';
 import { showLoading, hideLoading } from './util.js';
-import { getDescendantRelations, getSiblings, getSiblingRelations, calculateParentRelations} from '/relation.js'
+import { getDescendantRelations, getSiblings, getSiblingRelations, calculateParentRelations} from './relation.js'
 import {node, root, fitToScreen } from './SVG.js';
 
 
