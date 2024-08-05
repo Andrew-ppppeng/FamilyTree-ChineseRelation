@@ -16,10 +16,10 @@ https://andrew-ppppeng.github.io/familyTree/demo/FamilyTree.html
 
 ### Quickstart
 
-git clone, 将data.js中的JSON替换为你家族的信息
+git clone, 将data.js中的数据替换为你的家族数据
 
-生成JSON格式家族信息的推荐方式：
-复制[这个飞书文档](https://ui2lhftlq6.feishu.cn/base/NBcjbjzu9a1wGAsN2ZQc2HK8nwb?from=from_copylink)，填写你家族的信息，导出为Excel，打开excelConvert2Json.py脚本，将Excel地址替换为你的位置，运行
+>生成家族信息的方式：
+复制[这个模板](https://ui2lhftlq6.feishu.cn/base/NBcjbjzu9a1wGAsN2ZQc2HK8nwb?from=from_copylink)，填写你家族的信息，导出为Excel，打开excelConvert2Json.py脚本，将Excel地址替换为你的位置，运行
 
 
 ---
